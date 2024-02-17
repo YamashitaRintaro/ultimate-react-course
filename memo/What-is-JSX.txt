@@ -1,0 +1,28 @@
+# JSXとは？
+JSXは、JSの拡張機能。
+HTMLの中にJS、CSS、Reactコンポーネントを埋め込むこと機能を提供する。
+
+## どうやってJSXからJavaScriptに変換しているの？
+Babelによって変換が行われる。
+全てのJSXコンポーネントが、ネスト化された多数のReact.createElement fuction callに変換される。
+
+```before
+<header>
+  <h1 style="color: red">
+    Hello React!
+  </h1>
+</header>
+```
+
+```after
+// Babelによって、JSXからPure Reactに変換される。
+React.createElement(
+  'header',
+  null,
+  React.createElement(
+    'h1',
+    { style: {color: 'red} },
+    'Hello React!'
+  )
+);
+```
