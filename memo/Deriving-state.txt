@@ -1,0 +1,35 @@
+# 派生ステートとは
+既存の別のステートやpropsから計算されたステートのこと。
+
+## 派生ステートじゃないコード例とバッドポイント
+```
+const [cart, setCart] = useState([
+  {name: "JS Course", price: 15},
+  {name: "Ruby Course", price: 14},
+]);
+
+const [numItems, setNumItems] = useState(2);
+const [totalPrice, setTotalPrice] = useState(29);
+```
+
+【バッドポイント】
+👎 numItemsとtotalPriceは完全にcartに依存しているのに、Stateが3つに分割されている。
+👎 3つのStateを常に一緒に更新する必要がある。
+👎 3つのStateを別々に更新すると､コンポーネントを3回再レンダリングすることになる。
+
+
+## 派生ステートコード例とグッドポイント
+```
+const [cart, setCart] = useState([
+  {name: "JS Course", price: 15},
+  {name: "Ruby Course", price: 14},
+]);
+
+const numItems = cart.length;
+const totalPrice = useState(29);
+```
+
+【グッドポイント】
+👍 通常の変数を使用している。Stateを使わないので、不要なレンダリングが発生しない。
+👍 cartのStateが単一のソースとして機能し、関連するデータが常に同期している。
+👍 カートを更新するとコンポーネントが再レンダリングされ、numItemsとtotalPriceも自動的に再計算される｡
