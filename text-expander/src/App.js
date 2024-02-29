@@ -58,7 +58,7 @@ function TextExpander({
   }
 
   function handleToggleExpanded() {
-    setIsExpanded(!isExpanded)
+    setIsExpanded((exp) => !exp)
   }
 
   return (
