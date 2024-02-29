@@ -1,0 +1,65 @@
+# コンポーネントコンポジションとは
+コンポーネントコンポジションとは、複数のコンポーネントを組み合わせて、より複雑なコンポーネントを作成する技術です。
+コードの再利用性、保守性、拡張性を向上させるための重要な手法です。
+
+## コンポーネントコンポジションのメリット
+コンポーネントコンポジションには、以下のようなメリットがあります。
+
+・コードの再利用性: 同じコンポーネントを複数の場所で再利用することで、コードの冗長性を減らすことができます。
+・保守性: コンポーネントを小さな独立した部分に分割することで、コードの理解度と保守性を向上させることができます。
+・拡張性: 新しい機能を追加するために、既存のコンポーネントを組み合わせることができます。
+
+## コンポーネントコンポジションの実現方法
+コンポーネントコンポジションは、以下の2つの方法で実現できます。
+
+1. 子 props を使用する: 子 props を使用して、親コンポーネントから子コンポーネントにデータを渡すことができます。
+2. コンポーネントを props として明示的に定義する: コンポーネントを props として明示的に定義することで、別のコンポーネント内に別のコンポーネントをレンダリングすることができます。
+
+以下の例では、ListBox コンポーネントは MovieList コンポーネントを内部に含んでいます。
+このため、ListBox コンポーネントは MovieList コンポーネントに依存しており、再利用できません。
+```
+function ListBox({ movies }) {
+  const [isOpen1, setIsOpen1] = useState(true);
+
+  return (
+    <>
+      <div className="box">
+        <button
+          className="btn-toggle"
+          onClick={() => setIsOpen1((open) => !open)}
+        >
+          {isOpen1 ? "-" : "+"}
+        </button>
+        {isOpen1 && <MovieList movies={movies} />}
+      </div>
+    </>
+  )
+}
+```
+
+一方、以下の例では、ListBox コンポーネントは children props を使用しており、内部に含むコンポーネントを明示的に定義していません。
+このため、ListBox コンポーネントはどのようなコンポーネントでも内部に含めることができ、再利用可能です。
+```
+function ListBox({ children }) {
+  const [isOpen1, setIsOpen1] = useState(true);
+
+  return (
+    <>
+      <div className="box">
+        <button
+          className="btn-toggle"
+          onClick={() => setIsOpen1((open) => !open)}
+        >
+          {isOpen1 ? "-" : "+"}
+        </button>
+        {isOpen1 && children}
+      </div>
+    </>
+  )
+}
+```
+
+
+参考資料
+React 公式ドキュメント - コンポーネント: https://ja.reactjs.org/docs/components-and-props.html
+React の流儀 - コンポーネントの設計: https://ja.reactjs.org/docs/thinking-in-react.html
