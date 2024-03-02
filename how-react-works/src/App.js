@@ -64,8 +64,30 @@ function TabContent({ item }) {
   const [showDetails, setShowDetails] = useState(true);
   const [likes, setLikes] = useState(0);
 
+  function handleUndo() {
+    // 以下の2つの関数はバッチ処理されているため、コンポーネントの再レンダリングは1回のみ
+    setShowDetails(true)
+    setLikes(0)
+    console.log(likes); // 0ではなく、更新前の数値が表示される
+  }
+
   function handleInc() {
     setLikes(likes + 1);
+  }
+  function handleTripleInc() {
+    // setLikes(likes + 1);
+    // console.log(likes);
+    // setLikes(likes + 1);
+    // setLikes(likes + 1);
+
+    setLikes(likes => likes + 1);
+    setLikes(likes => likes + 1);
+    setLikes(likes => likes + 1);
+  }
+
+  function handleUndoLater() {
+    // React18以降では、バッチ処理はイベントハンドラ内部だけでなく、タイムアウトなどの内部でも発生する
+    setTimeout(() => handleUndo, 2000);
   }
 
   return (
@@ -81,13 +103,13 @@ function TabContent({ item }) {
         <div className="hearts-counter">
           <span>{likes} ❤️</span>
           <button onClick={handleInc}>+</button>
-          <button>+++</button>
+          <button onClick={handleTripleInc}>+++</button>
         </div>
       </div>
 
       <div className="tab-undo">
-        <button>Undo</button>
-        <button>Undo in 2s</button>
+        <button onClick={handleUndo}>Undo</button>
+        <button onClick={handleUndoLater}>Undo in 2s</button>
       </div>
     </div>
   );
