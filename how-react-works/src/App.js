@@ -38,8 +38,10 @@ function Tabbed({ content }) {
         <Tab num={3} activeTab={activeTab} onClick={setActiveTab} />
       </div>
 
+      {/* Diffingにより、activeTab <= 2の場合はDOMの属性のみ変化しているため、要素は再構築されない。 */}
+      {/* 一意なkeyを渡して意図的に再構築することで、Stateをリセットする。 */}
       {activeTab <= 2 ? (
-        <TabContent item={content.at(activeTab)} />
+        <TabContent item={content.at(activeTab)} key={content.at(activeTab).summary} />
       ) : (
         <DifferentContent />
       )}
