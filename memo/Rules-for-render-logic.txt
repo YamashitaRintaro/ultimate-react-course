@@ -1,0 +1,79 @@
+## レンダーロジックとは
+レンダーロジックとは、ReactコンポーネントがどのようにしてUIを描画するかを定義するコードのこと。
+このロジックは、コンポーネントが受け取るデータ（propsやstate）に基づいてUIの見た目を決定し、JSXを使用して表現される。
+レンダーロジックは、Reactの宣言的なパラダイムに従い、UIの状態を直接操作するのではなく、ある状態に基づいてUIがどのように見えるべきかを記述する。
+
+## レンダーロジックの2つのルール
+### 1. 純粋性の原則
+レンダーロジックは純粋関数であるべき。つまり、同じpropsやstateの入力に対しては、常に同じJSXの出力を返す必要がある。
+この純粋性により、Reactはコンポーネントの出力を予測可能にし、不要なレンダリングを避けることができる。
+
+### 2. 副作用の排除
+レンダーロジック内で副作用（side effects）を引き起こす操作は避けるべき。
+トップレベルで実行され、コンポーネントのレンダリングを担当するロジックは、以下のような外部とのインタラクションは持つべきではない。
+- API call
+- timer
+- DOM API
+- コンポーネント関数のスコープ外のオブジェクトや変数の変更
+- Stateの更新
+
+これらの副作用は、Reactのライフサイクルメソッドやフック（例えばuseEffect）を使用して適切に管理されるべき。
+このようにレンダーロジックから副作用を分離することで、コンポーネントの予測可能性と再利用性が向上する。
+
+関数型プログラミングの影響を大いに受けていることがわかる。
+
+## レンダーロジックの例
+以下の3つの例はすべて純粋な関数的アプローチに基づいており、副作用を引き起こさずにUIを定義している。
+
+### 条件付きレンダリングの例
+```
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
+  return (
+    <div>
+      {isLoggedIn ? (
+        <h1>Welcome back!</h1>
+      ) : (
+        <h1>Please sign up.</h1>
+      )}
+    </div>
+  );
+}
+```
+
+### リストレンダリングの例
+```
+function TodoList(props) {
+  const todos = props.todos;
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+### 状態に基づいて動的にスタイルを適用する例
+```
+import React, { useState } from 'react';
+
+function DynamicStyleComponent() {
+  const [isActive, setIsActive] = useState(false);
+
+  const handleClick = () => {
+    setIsActive(!isActive);
+  };
+
+  return (
+    <button
+      style={{ backgroundColor: isActive ? 'blue' : 'gray' }}
+      onClick={handleClick}
+    >
+      {isActive ? 'Active' : 'Inactive'}
+    </button>
+  );
+}
+
+```
