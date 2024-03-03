@@ -1,0 +1,101 @@
+# key propsとは
+ある要素がユニークであることを差分アルゴリズムに伝えるための特別なprops。
+各コンポーネント・インスタンスに一意の識別子を与えることができ、Reactが同じコンポーネント・タイプの複数のインスタンスを区別できるようになる。
+
+前提として、Diffingでは、レンダリング間で変化しないキーを維持する際は、ツリー内の位置が変わってもその要素はDOMに保持される。
+それを踏まえて、key propsが必要な理由は以下の2つ。
+1. 不要な再レンダリングを防ぎたい
+2. 再レンダリングさせることでStateをリセットしたい
+
+## 不要な再レンダリングを防ぎたい
+### keyを渡さない場合
+```before
+<ul>
+  <Question question={q[1]}/>
+  <Question question={q[2]}/>
+</ul>
+```
+
+```after
+<ul>
+  // 新しいリストを追加
+  <Question question={q[0]}/>
+
+  // 以下は変更前と同じだが、Fiber Tree内の異なる場所に表示されるようになった。
+  // Diffingのルールに従って、以下の2つの要素はDOMから削除され、新しい位置に再構築される。
+  // パフォーマンス悪い！
+  <Question question={q[1]}/>
+  <Question question={q[2]}/>
+</ul>
+```
+
+### keyを渡す場合
+```before
+<ul>
+  <Question key='q1' question={q[1]}/>
+  <Question key='q2' question={q[2]}/>
+</ul>
+```
+
+```after
+<ul>
+  // 新しいリストを追加
+  <Question key='q0' question={q[0]}/>
+
+  // 2つの要素はツリーの異なる位置にあるが、安定したキーを持つことになる。
+  // つまり、レンダリングを跨いでも再構築されない。
+  // パフォーマンス良い！
+  <Question key='q1' question={q[1]}/>
+  <Question key='q2' question={q[2]}/>
+</ul>
+```
+
+## 再レンダリングさせることでStateをリセットしたい
+### keyを渡さない場合
+```before
+<Question 
+  question={{
+    title: 'React vs JS'
+    body: 'なぜReactを使うのか？'
+  }}
+/>
+```
+
+```after
+// 同じ位置に新しいQuestion
+<Question 
+  question={{
+    // propsが変化しただけなので、DOM要素が再構築されることはない。
+    // つまり、Stateは維持される。ただ、新しいQuestionなのでStateはリセットしたい！
+    title: 'Rails vs Ruby'
+    body: 'なぜRailsを使うのか？'
+  }}
+/>
+```
+
+### keyを渡す場合
+```before
+<Question 
+  question={{
+    title: 'React vs JS'
+    body: 'なぜReactを使うのか？'
+  }}
+  key='q4'
+/>
+```
+
+```after
+<Question 
+  question={{
+    title: 'Rails vs Ruby'
+    body: 'なぜRailsを使うのか？'
+  }}
+  // 異なるkeyを渡すことで、DOMが再構築される。
+  // つまり、Stateがリセットされる。
+  key='q5'
+/>
+```
+
+## まとめ
+Reactのkey propsは、コンポーネントの効率的な更新と管理において重要な役割を果たす。
+不必要な再レンダリングを避けることでアプリケーションのパフォーマンスを向上させると同時に、特定の状況でコンポーネントのStateをリセットすることが可能になる。
