@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const tempMovieData = [
   {
@@ -205,25 +205,9 @@ function WatchedMovie({ movie }) {
   </li>
 }
 
-const KEY = '5d49166'
-
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
-
-  // コンポーネントのマウント時にのみ実行される
-  // コンポーネントがレンダリングされる際ではなく、画面に描画された後に実行
-  useEffect(() => {
-    fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
-      .then((res) => res.json())
-      .then(data => setMovies(data.Search));
-  }, [])// 依存配列が最初にマウントされた時にのみ実行される
-
-  // 以下のコードで再レンダリングの無限ループがが発生する。
-  // Stateが更新されたら再レンダリングし、その再レンダリングによってStateが更新されるため。
-  // fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
-  //   .then((res) => res.json())
-  //   .then(data => setMovies(data.Search));
 
   return (
     <>
