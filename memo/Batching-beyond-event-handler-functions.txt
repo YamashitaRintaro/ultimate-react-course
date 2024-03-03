@@ -1,0 +1,70 @@
+Reactの開発において、レンダリングのトリガーフェーズの理解は、高パフォーマンスなアプリケーションを構築する上で欠かせません。
+特に、Reactがどのようにして複数のsetState呼び出しを効率的に処理するか、そのメカニズムを掘り下げることは、開発者にとって有益です。
+今回は、useStateフックを用いたState管理と、イベントハンドラ内でのState更新がReactによってどのように扱われるかに焦点を当てます。
+
+## State更新のバッチ処理
+Reactは、一つのイベントハンドラ内で行われた複数のState更新を単一の更新として扱います。
+これにより、イベントハンドラが完了するまで再レンダリングは行われず、すべてのState更新が完了した後に一度だけUIが更新されます。
+このプロセスは「バッチ処理」と呼ばれ、Reactアプリケーションのパフォーマンスを大幅に向上させます。
+
+コード例
+以下のシンプルなコード例を考えます。ここでは、answer、best、solvedの三つのStateがあり、ボタンクリックによりこれらのStateがリセットされます。
+
+```jsx
+function Example() {
+  const [answer, setAnswer] = useState('');
+  const [best, setBest] = useState('');
+  const [solved, setSolved] = useState('');
+
+  const reset = () => {
+    setAnswer('');
+    console.log(answer)
+    setBest('');
+    setSolved('');
+  };
+
+  return <button onClick={reset}>Reset</button>;
+}
+```
+
+直感的には、このreset関数内で三つのState変数が更新された場合、Reactが三回再レンダリングを行うと考えがちですが、実際にはそうではありません。
+ReactはこれらのState更新を一つの更新プロセスとしてまとめ上げ、イベントハンドラが完了した後に一度だけ再レンダリングを行います。
+
+## パフォーマンスの最適化
+このバッチ処理のアプローチは、Reactが提供するパフォーマンスの最適化の一例です。
+複数のState更新が一緒に行われる場合、それらは一つの新しいビューを形成していると見なされ、Reactは画面の更新を一回だけ行います。
+これにより、不要なレンダリングが削減され、アプリケーションのパフォーマンスが向上します。
+
+## よくあるミス
+先ほどのコード例内のconsole.log(answer)では、コンソールに何が表示されるでしょうか？
+```
+const reset = () => {
+  setAnswer('');
+  console.log(answer)
+  setBest('');
+  setSolved('');
+};
+```
+
+### Reactの非同期的なState更新
+レンダーフェーズでは、StateはFiber Tree内に保持されています。そして重要な点は、console.log(answer)が実行される時点では、まだ再レンダリングが行われていないということです。
+つまり、console.logによって表示されるのは更新前のanswerの値なのです。
+ReactにおけるStateの更新は、実際に再レンダリングが完了した後に反映されるため、このタイミングでのconsole.logは、新しい値を反映していません。
+このような理由から、ReactではStateの更新は非同期だと言われます。
+
+### 最新のStateを参照する方法
+同じイベントハンドラ内で直前のState更新を基に新たなStateを設定したい場合は、State更新関数に単一の値を渡すのではなく、コールバック関数を利用します。
+このコールバック関数は、最新のStateを引数として受け取り、そのStateに基づいた新たなStateを返します。
+```
+setAnswer(prevAnswer => {
+  console.log(prevAnswer); // 最新のStateを参照できます
+  return '';
+});
+```
+なぜコールバック関数だと最新のStateを参照できるのかについては以下をご覧ください。
+https://react.dev/learn/queueing-a-series-of-state-updates
+
+## React18とバッチ処理
+React18からは、イベントハンドラ以外の場所でも自動的にバッチ処理が行われるようになりました。
+これにより、たとえばsetTimeoutやプロミスのコールバック内でのState更新でも、バッチ処理の恩恵を受けることが可能になりました。
+
