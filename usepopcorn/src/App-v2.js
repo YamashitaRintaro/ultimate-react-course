@@ -232,6 +232,28 @@ function Logo() {
 }
 
 function Search({ query, setQuery }) {
+  const inputEl = useRef(null)
+
+  useEffect(() => {
+    function callback(e) {
+      if (document.activeElement === inputEl.current) return
+      if (e.code === 'Enter') {
+        inputEl.current.focus()
+        setQuery('')
+      }
+    }
+
+    document.addEventListener('keydown', callback)
+    return () => document.addEventListener('keydown', callback)
+  }, [setQuery])
+
+
+  // reactは宣誓的なので、以下のような手動のDOM操作は不適切
+  // useEffect(() => {
+  //   const el = document.querySelector('.search')
+  //   el.focus()
+  // }, [])
+
   return (
     <input
       className="search"
@@ -239,6 +261,7 @@ function Search({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputEl}
     />
   );
 }
