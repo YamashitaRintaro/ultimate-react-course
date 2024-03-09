@@ -1,0 +1,86 @@
+# Reactの宣言的UIとは？
+Reactを学ぶ過程で、しばしば「宣言的」という言葉に出会います。
+この宣言的UIは、Reactの核となる哲学の一つであり、その開発体験とアプリケーションのパフォーマンスに大きく貢献しています。
+では、この宣言的UIとは具体的に何を意味するのでしょうか？
+この記事では、Reactの宣言的な性質について探求し、それがどのように開発者の作業を効率化し、より直感的なコードを書くことを可能にするのかを見ていきます。
+
+## 命令的と宣言的の違い
+Reactの宣言的UIを理解するにはまず、「命令的（Imperative）」と「宣言的（Declarative）」の違いを知る必要があります。
+
+### 命令的UI
+命令的UIでは、コードが「何をするか」だけでなく、「どのようにそれを達成するか」を記述します。
+これは、一連の手続きやステップを定義することで、目的の結果を得る方法です。
+以下のコード例では、
+1. 要素の作成
+2. テキストの設定
+3. 要素の追加
+4. 入力フィールドのクリア
+を開発者が詳細に指定しています。
+```
+const addButton = document.getElementById('addItemButton');
+const itemInput = document.getElementById('itemInput');
+const itemList = document.getElementById('itemList');
+
+addButton.addEventListener('click', function() {
+    const newItemText = itemInput.value;
+
+    if (newItemText !== '') {
+        const newItem = document.createElement('li');
+        newItem.textContent = newItemText;
+        itemList.appendChild(newItem);
+        itemInput.value = '';
+    }
+});
+```
+
+### 宣言的UI
+宣言的UIでは、コードが「何を達成したいか」だけを記述し、「どのように」その結果が得られるかはフレームワークやライブラリに委ねられます。
+Reactは、この宣言的UIを採用しています。
+開発者は最終的な目標を宣言し、その達成方法の詳細を気にする必要がありません。
+Reactがその背後で必要なDOMの更新を効率的に行います。
+
+宣言的UIの一例として、リストの項目を表示するコンポーネントを考えてみましょう。
+Reactでは、このリストの状態（例えば、項目の配列）を保持し、その配列をマップして各項目を表示するコンポーネントを定義します。
+項目が追加や削除されると、単に配列を更新するだけで、ReactがUIの残りの部分を適切に更新します。
+```
+function ItemAdder() {
+    const [items, setItems] = useState([]);
+    const [newItemText, setNewItemText] = useState('');
+
+    const handleAddItem = () => {
+        if (newItemText !== '') {
+            setItems([...items, newItemText]);
+            setNewItemText(''); 
+        }
+    };
+
+    const handleInputChange = (event) => {
+        setNewItemText(event.target.value);
+    };
+
+    return (
+        <div>
+            <input
+                type="text"
+                value={newItemText}
+                onChange={handleInputChange}
+                placeholder="Add new item"
+            />
+            <button onClick={handleAddItem}>Add Item</button>
+            <ul>
+                // 開発者はリスト項目が追加された際や削除された際の具体的なDOM操作を一切気にする必要がない。
+                {items.map((item, index) => (
+                    <li key={index}>{item}</li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+```
+
+
+## なぜ宣言的なのか？
+- 可読性の向上：コードが何をするのか（「何」）が明確になるため、他の開発者がコードを読んで理解するのが容易になります。
+- バグの減少：「どのように」達成するかを心配する必要がないため、副作用や予期せぬ動作が発生するリスクが減ります。
+- 再利用性の向上：特定の状態に対するUIの宣言は、アプリケーション内の異なる部分で簡単に再利用できます。
+- 状態管理の効率化：宣言的フレームワークでは、アプリケーションの状態が中心的な役割を果たします。状態が変化すると、フレームワークがそれに応じてUIを自動で更新します。
