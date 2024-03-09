@@ -56,10 +56,15 @@ const KEY = "5d49166";
 export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null);
+
+  // const [watched, setWatched] = useState([]);
+  const [watched, setWatched] = useState(function () {
+    const storedVal = localStorage.getItem('watched')
+    return JSON.parse(storedVal)
+  });
 
   /*
   useEffect(function () {
@@ -90,11 +95,18 @@ export default function App() {
 
   function handleAddWatched(movie) {
     setWatched((watched) => [...watched, movie]);
+
+    // Stateの更新は非同期で行われるため、以下のようにすると更新前の値が入る。
+    // localStorage.setItem('watched', watched)
   }
 
   function handleDeleteWatched(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
+
+  useEffect(function () {
+    localStorage.setItem('watched', JSON.stringify(watched))
+  }, [watched])
 
   useEffect(
     function () {
