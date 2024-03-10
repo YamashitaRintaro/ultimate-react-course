@@ -1,0 +1,109 @@
+## useReducerとは？
+useReducerはReactのフックで、複雑なコンポーネントの状態管理をよりシンプルにするために使用されます。
+アクションに応じて状態を更新するロジック（リデューサー関数）を定義することで、複数の状態や相互に関連する状態変更を一箇所で管理できます。
+
+## なぜuseReducerが必要なのか？
+Reactアプリケーションが成長し、ステートの更新が複雑になるにつれて、useStateフックだけで全てを管理することは困難になります。
+複数のステート変数が関与し、それらの更新が相互に依存する場合、コードの可読性と保守性が低下します。
+このような場合、useReducerフックの使用が推奨されます。
+
+### useStateでは状態管理しきれない場面
+- コンポーネントに多数の状態変数があり、状態更新が複数のイベントハンドラに跨っている
+- 同じイベントハンドラで複数のステートを同時に更新する
+- 1つの状態の更新が、複数の他の状態に依存する
+
+## useReducerの基本
+```
+const [state, dispatch] = useReducer(reducer, initialState);
+```
+- reducer：アプリケーションの現在の状態と、その状態に対するアクション（更新要求）を受け取り、新しい状態を返す純粋関数
+- state：現在の状態。
+- action: 状態更新の種類を説明するオブジェクト
+- dispatch：状態更新のトリガー。actionをreducerに送信するためのメソッド。
+
+💡reducerという名前の由来
+配列のreduceメソッドがが由来です。
+reduceメソッドがすべての配列の値を1つの値に蓄積するように、reducerはすべてのアクションを時間の経過とともに1つの状態に蓄積します｡
+
+## useReducerとuseStateの比較
+### useStateの場合
+以下の例では、各フォームフィールドに対して個別のuseStateフックを使用して状態を管理しています。
+フィールドが増えると、状態を管理するためのフックもそれに応じて増えます。
+```
+function LoginFormWithState() {
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // フォーム送信
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>UserName:</label>
+        <input type="text" value={userName} onChange={(e) => setUserName(e.target.value)} />
+      </div>
+      <div>
+        <label>Password:</label>
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      </div>
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+```
+
+### useReducerの場合
+useReducerを使用すると、フォームの状態を一つのオブジェクトとして管理し、アクションを介して更新できます。
+フィールドが増えても、状態管理のロジックをシンプルに保つことができます。
+```
+const initialState = { username: '', password: '' };
+
+function formReducer(state, action) {
+  switch (action.type) {
+    case 'SET_USERNAME':
+      return { ...state, username: action.payload };
+    case 'SET_PASSWORD':
+      return { ...state, password: action.payload };
+    default:
+      return state;
+  }
+}
+
+function LoginFormWithReducer() {
+  const [state, dispatch] = useReducer(formReducer, initialState);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // フォーム送信
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>Username:</label>
+        <input
+          type="text"
+          value={state.username}
+          onChange={(e) => dispatch({ type: 'SET_USERNAME', payload: e.target.value })}
+        />
+      </div>
+      <div>
+        <label>Password:</label>
+        <input
+          type="password"
+          value={state.password}
+          onChange={(e) => dispatch({ type: 'SET_PASSWORD', payload: e.target.value })}
+        />
+      </div>
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+```
+
+## 参考
+https://ja.react.dev/reference/react/useReducer
+https://ja.react.dev/learn/extracting-state-logic-into-a-reducer
