@@ -9,13 +9,17 @@ Reactの宣言的UIを理解するにはまず、「命令的（Imperative）」
 
 ### 命令的UI
 命令的UIでは、コードが「何をするか」だけでなく、「どのようにそれを達成するか」を記述します。
-これは、一連の手続きやステップを定義することで、目的の結果を得る方法です。
+一連の手続きやステップを定義することで、目的の結果を得る方法です。
 以下のコード例では、
 1. 要素の作成
 2. テキストの設定
 3. 要素の追加
 4. 入力フィールドのクリア
 を開発者が詳細に指定しています。
+
+💡JSにフレームワークが存在する理由は、フロントエンドの規模が大きくなるにつれ、命令的UIが現実的ではなくなったためです。
+詳しくは以下をご覧ください。
+https://developer.mozilla.org/ja/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Introduction#%E4%BD%95%E6%95%85%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%8C%E5%AD%98%E5%9C%A8%E3%81%99%E3%82%8B%E3%81%AE%E3%81%A7%E3%81%97%E3%82%87%E3%81%86%E3%81%8B
 ```
 const addButton = document.getElementById('addItemButton');
 const itemInput = document.getElementById('itemInput');
