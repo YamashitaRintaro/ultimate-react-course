@@ -1,7 +1,4 @@
-import { useQuiz } from "../context/QuizContext";
-
-function FinishScreen() {
-  const { points, highscore, maxPossiblePoints, dispatch } = useQuiz();
+function FinishScreen({ points, maxPossiblePoints, highscore, dispatch }) {
 
   const percentage = (points / maxPossiblePoints) * 100;
 
