@@ -2,7 +2,7 @@ const initialStateAccount = {
   balance: 0,
   loan: 0,
   loanPurpose: ""
-}
+};
 
 export default function accountReducer(state = initialStateAccount, action) {
   switch (action.type) {
@@ -32,8 +32,21 @@ export default function accountReducer(state = initialStateAccount, action) {
   }
 }
 
-export function deposit(amount) {
-  return { type: "account/deposit", payload: amount };
+export function deposit(amount, currency) {
+  if (currency === "USD") return { type: "account/deposit", payload: amount };
+
+  // Thunksはactionオブジェクトを返すのではなく、新しい関数を返す
+  return async function (dispatch, getState) {
+    dispatch({ type: "account/convertingCurrency" });
+
+    const res = await fetch(
+      `https://api.frankfurter.app/latest?amount=${amount}&from=${currency}&to=USD`
+    );
+    const data = await res.json();
+    const converted = data.rates.USD;
+
+    dispatch({ type: "account/deposit", payload: converted });
+  };
 }
 
 export function withdraw(amount) {
