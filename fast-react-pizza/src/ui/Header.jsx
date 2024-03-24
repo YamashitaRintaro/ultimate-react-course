@@ -1,0 +1,13 @@
+import { Link } from 'react-router-dom';
+
+function Header() {
+  return (
+    <header>
+      <Link to="/" className="tracking-widest">
+        Fast React Pizza Co.
+      </Link>
+    </header>
+  );
+}
+
+export default Header;
