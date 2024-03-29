@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import styled from 'styled-components';
+import { formatCurrency } from '../../../../fast-react-pizza/src/utils/helpers';
 
 const TableRow = styled.div`
   display: grid;
@@ -25,16 +26,36 @@ const Cabin = styled.div`
   font-size: 1.6rem;
   font-weight: 600;
   color: var(--color-grey-600);
-  font-family: "Sono";
+  font-family: 'Sono';
 `;
 
 const Price = styled.div`
-  font-family: "Sono";
+  font-family: 'Sono';
   font-weight: 600;
 `;
 
 const Discount = styled.div`
-  font-family: "Sono";
+  font-family: 'Sono';
   font-weight: 500;
   color: var(--color-green-700);
 `;
+
+function CabinRow({ cabin }) {
+  const { id: cabinId, name, maxCapacity, regularPrice, discount, image, description } = cabin;
+
+  return (
+    <TableRow role="row">
+      <Img src={image} alt={`Cabin ${name}`} />
+
+      <Cabin>{name}</Cabin>
+
+      <div>Fits up to {maxCapacity} guests</div>
+
+      <Price>{formatCurrency(regularPrice)}</Price>
+
+      {discount ? <Discount>{formatCurrency(discount)}</Discount> : <span>&mdash;</span>}
+    </TableRow>
+  );
+}
+
+export default CabinRow;
