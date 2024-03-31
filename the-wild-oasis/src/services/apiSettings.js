@@ -1,6 +1,7 @@
-import supabase from "./supabase";
+import { supabase } from "./supabase";
 
 export async function getSettings() {
+  // 配列全体ではなく、1つのオブジェクト
   const { data, error } = await supabase.from("settings").select("*").single();
 
   if (error) {
