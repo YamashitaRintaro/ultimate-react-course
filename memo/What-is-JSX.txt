@@ -1,10 +1,18 @@
 # JSXとは？
-JSXは、JSの拡張機能。
-HTMLの中にJS、CSS、Reactコンポーネントを埋め込むこと機能を提供する。
+JSXはReactで使用されるJavaScriptの拡張構文です。
+HTMLのように見えますが、実際にはJavaScriptの表現力を高めるためのシンタックスシュガーです。
+しかし、ブラウザはJSXを直接理解することができません。ここでBabelの役割が重要になってきます。
+
+## Babelとは？
+BabelはJavaScriptのコンパイラです。
+ES6以上のJavaScriptやJSXなど、最新のJavaScript構文を古いJavaScript構文に変換することで、古いブラウザでも実行できるようにするツールです。
 
 ## どうやってJSXからJavaScriptに変換しているの？
-Babelによって変換が行われる。
-全てのJSXコンポーネントが、ネスト化された多数のReact.createElement fuction callに変換される。
+JSXにおいては、以下のような変換プロセスを経ます。
+全てのJSXコンポーネントが、ネスト化された多数のReact.createElement function callに変換されます。
+1. 解析（Parsing）: Babelはまず、JSXのコードを読み込んで構文木（AST）に解析します。コードの構造を理解し、変換のための準備をする過程です。
+2. 変換（Transformation）: 構文木を変換して、JSXをReact.createElement()の呼び出しに置き換えます。このステップで、コードはまだ純粋なJavaScriptにはなっていませんが、Reactが理解できる形に変形されます。
+3. 生成（Code Generation）: 最終的に、変換された構文木から実行可能なJavaScriptコードを生成します。この段階で、ブラウザが解釈できるJavaScriptコードになります。
 
 ```before
 <header>
@@ -26,3 +34,7 @@ React.createElement(
   )
 );
 ```
+
+## 参考
+https://ja.legacy.reactjs.org/docs/introducing-jsx.html
+https://ja.legacy.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
